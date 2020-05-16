@@ -1,4 +1,4 @@
-import { Hex, Layout, Point } from "./hex.js";
+import { Hex } from "./hex.js";
 
 // Style constants
 const lineColor = "#cccbca";
@@ -34,7 +34,28 @@ function drawHex(ctx, layout, hex) {
   ctx.fill(hexagon);
 }
 
-function shapeRectangle(width, height) {
+// Writes hex coordinates on the hexagons themeselves
+// Useful for debugging
+function drawHexLabel(ctx, layout, hex) {
+  const pointSize = Math.round(
+    0.5 * Math.min(Math.abs(layout.size.x), Math.abs(layout.size.y))
+  );
+
+  let center = layout.convertHexToPixel(hex);
+
+  // Draw text
+  ctx.fillStyle = "blue";
+  ctx.font = `${pointSize}px sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(
+    hex.length === 0 ? "q,r,s" : hex.q + "," + hex.r + "," + hex.s,
+    center.x,
+    center.y
+  );
+}
+
+export function shapeRectangle(width, height) {
   let hexes = [];
 
   let i1 = -Math.floor(width / 2);
@@ -53,7 +74,12 @@ function shapeRectangle(width, height) {
   return hexes;
 }
 
-function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(50, 20)) {
+export function drawGrid(
+  id,
+  backgroundColor,
+  layout,
+  hexes = shapeRectangle(50, 20)
+) {
   // Find the canvas element on the page
   let canvas = document.getElementById(id);
   if (!canvas) {
@@ -64,13 +90,13 @@ function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(50, 20)) {
   let ctx = canvas.getContext("2d");
 
   canvas.width = innerWidth;
-  canvas.height = innerHeight;
+  canvas.height = innerHeight - 200;
 
   let width = canvas.width;
   let height = canvas.height;
 
   // ??? (I don't know what it does)
-/*   if (window.devicePixelRatio && window.devicePixelRatio != 1) {
+  /*   if (window.devicePixelRatio && window.devicePixelRatio != 1) {
     canvas.width = width * window.devicePixelRatio;
     canvas.height = height * window.devicePixelRatio;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
@@ -88,9 +114,3 @@ function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(50, 20)) {
     drawHex(ctx, layout, hex);
   });
 }
-
-drawGrid(
-  "game",
-  "black",
-  new Layout(Layout.pointy, new Point(15, 15), new Point(0, 0))
-);
