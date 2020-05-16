@@ -1,4 +1,10 @@
-import {Hex, Layout, Point} from "./hex.js";
+import { Hex, Layout, Point } from "./hex.js";
+
+// Style constants
+const lineColor = "#cccbca";
+const lineWidth = 3;
+const colorAlive = "white";
+const colorDead = "black";
 
 const constructor = (q, r, s) => {
   return new Hex(q, r, s);
@@ -9,20 +15,23 @@ function drawHex(ctx, layout, hex) {
   let corners = layout.getPolygonCorners(hex);
 
   // Draw the hexagon
-  ctx.beginPath();
+  let hexagon = new Path2D();
 
-  // Change style settings
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 1;
-
-  // Draw the actual lines
-  ctx.moveTo(corners[5].x, corners[5].y);
+  hexagon.moveTo(corners[5].x, corners[5].y);
   for (let i = 0; i < 6; i++) {
-    ctx.lineTo(corners[i].x, corners[i].y);
+    hexagon.lineTo(corners[i].x, corners[i].y);
   }
 
+  hexagon.closePath();
+
   // Apply styles to the lines
-  ctx.stroke();
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke(hexagon);
+
+  // Fill the hexagon with color
+  ctx.fillStyle = hex.isAlive ? colorAlive : colorDead;
+  ctx.fill(hexagon);
 }
 
 function shapeRectangle(width, height) {
@@ -44,7 +53,7 @@ function shapeRectangle(width, height) {
   return hexes;
 }
 
-function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(15, 15)) {
+function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(50, 20)) {
   // Find the canvas element on the page
   let canvas = document.getElementById(id);
   if (!canvas) {
@@ -56,12 +65,13 @@ function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(15, 15)) {
 
   let width = canvas.width;
   let height = canvas.height;
-  // ???
-  if (window.devicePixelRatio && window.devicePixelRatio != 1) {
+
+  // ??? (I don't know what it does)
+/*   if (window.devicePixelRatio && window.devicePixelRatio != 1) {
     canvas.width = width * window.devicePixelRatio;
     canvas.height = height * window.devicePixelRatio;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  }
+  } */
 
   // Apply background color
   ctx.fillStyle = backgroundColor;
@@ -78,6 +88,6 @@ function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(15, 15)) {
 
 drawGrid(
   "game",
-  "white",
-  new Layout(Layout.pointy, new Point(25, 25), new Point(0, 0))
+  "black",
+  new Layout(Layout.pointy, new Point(15, 15), new Point(0, 0))
 );
