@@ -28,6 +28,9 @@ export class Hex {
     this.r = r;
     this.s = s;
 
+    // Status of the hex (dead or alive)
+    this.isAlive = Boolean(Math.round(Math.random()));
+
     // Check coordinates for correctness
     if (Math.round(q + r + s) !== 0) {
       throw new Error(`q + r + s must be equal 0, was ${q + r + s}`);
