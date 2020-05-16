@@ -63,6 +63,9 @@ function drawGrid(id, backgroundColor, layout, hexes = shapeRectangle(50, 20)) {
   // Get 2d context object
   let ctx = canvas.getContext("2d");
 
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+
   let width = canvas.width;
   let height = canvas.height;
 
