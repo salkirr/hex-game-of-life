@@ -46,35 +46,42 @@ function createNewGeneration(hexes) {
     let newHex = cloneHex(currentHex);
 
     // Create array of all neighbours
-    let neighboursAlive = 0;
     let neighbours = [];
     for (let i = 0; i < 6; i++) {
-      // Creates new instance of hex with coordinates of neighbour
-      let neighbour = currentHex.getNeighbour(i);
+      // Creates new instance of hex with coordinates of neighbour and pushes to an array
+      neighbours.push(currentHex.getNeighbour(i));
+    }
 
-      /* Because neighbour variable doesn't contain correct
+    /* Because neighbour variable doesn't contain correct
       isAlive value, we need to search for the hex with same
       coordinates in hexes array. */
+    let neighboursAlive = 0;
+    for (let k = 0; k < neighbours.length; k++) {
       for (let i = 0; i < hexes.length; i++) {
         if (
           hexes[i].isAlive &&
-          hexes[i].q === neighbour.q &&
-          hexes[i].r === neighbour.r &&
-          hexes[i].s === neighbour.s
+          hexes[i].q === neighbours[k].q &&
+          hexes[i].r === neighbours[k].r &&
+          hexes[i].s === neighbours[k].s
         ) {
           neighboursAlive++;
-          neighbours.push(hexes[i]);
 
           break;
         }
       }
-    }
 
+      if (neighboursAlive === neighbours.length) {
+        break;
+      }
+    }
 
     // Change the state of the hex
     if (newHex.isAlive && (neighboursAlive == 2 || neighboursAlive == 3)) {
       newHex.isAlive = true;
-    } else if (!newHex.isAlive && neighboursAlive == 3) {
+    }
+    // We shouldn't check if hex is dead because all alive hexes
+    // with 3 alive neighbours passed the first condition
+    else if (neighboursAlive == 3) {
       newHex.isAlive = true;
     } else {
       newHex.isAlive = false;
@@ -87,5 +94,5 @@ function createNewGeneration(hexes) {
 }
 
 function cloneHex(hex) {
-  return new Hex(hex.q, hex.r, hex.s);
+  return new Hex(hex.q, hex.r, hex.s, hex.isAlive);
 }

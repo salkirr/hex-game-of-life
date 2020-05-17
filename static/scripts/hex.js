@@ -21,7 +21,7 @@ export class Hex {
     return (Math.abs(this.q) + Math.abs(this.r) + Math.abs(this.s)) / 2;
   }
 
-  constructor(q, r, s) {
+  constructor(q, r, s, isAlive) {
     // We are using cube coordinate system
     // q -> x, r -> z, s -> y
     this.q = q;
@@ -29,7 +29,9 @@ export class Hex {
     this.s = s;
 
     // Status of the hex (dead or alive)
-    this.isAlive = Boolean(Math.round(Math.random()));
+    if (isAlive !== undefined) {
+      this.isAlive = isAlive;
+    }
 
     // Check coordinates for correctness
     if (Math.round(q + r + s) !== 0) {

@@ -6,8 +6,8 @@ const lineWidth = 3;
 const colorAlive = "white";
 const colorDead = "black";
 
-const constructor = (q, r, s) => {
-  return new Hex(q, r, s);
+const constructor = (q, r, s, isAlive) => {
+  return new Hex(q, r, s, isAlive);
 };
 
 function drawHex(ctx, layout, hex) {
@@ -67,7 +67,8 @@ export function shapeRectangle(width, height) {
   for (let j = j1; j < j2; j++) {
     let jOffset = -Math.floor(j / 2);
     for (let i = i1 + jOffset; i < i2 + jOffset; i++) {
-      hexes.push(constructor(i, j, -i - j));
+      let isAlive = Boolean(Math.round(Math.random())); 
+      hexes.push(constructor(i, j, -i - j, isAlive));
     }
   }
 
