@@ -5,10 +5,10 @@ import { Layout, Point, Hex } from "./hex.js";
 let isActive = false;
 
 // Create array of hexes that form a grid
-let hexes = shapeRectangle(40, 20);
+let hexes = shapeRectangle(90, 40);
 
 // Create the instance of the Layout
-const layout = new Layout(Layout.pointy, new Point(20, 20), new Point(0, 0));
+const layout = new Layout(Layout.pointy, new Point(10, 10), new Point(0, 0));
 
 // Draw the grid
 drawGrid("game", "black", layout, hexes);
@@ -31,63 +31,59 @@ async function main() {
     drawGrid("game", "black", layout, hexes);
 
     // Sleep for 0.5 sec
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 50));
   }
 }
 
 function createNewGeneration(hexes) {
-  // Create new array for hexes
-  let newHexes = [];
+  // Create new outer dict for hexes
+  let newHexes = {};
 
-  // Change the state of hexes and add them to newHexes array
-  for (let i = 0; i < hexes.length; i++) {
-    let currentHex = hexes[i];
+  // Iterate through all hexes and calculate their next state
+  for (const r of Object.keys(hexes)) {
+    // Create inner dict for hexes
+    let innerDict = {};
 
-    let newHex = cloneHex(currentHex);
+    for (const q of Object.keys(hexes[r])) {
+      let newHex = cloneHex(hexes[r][q]);
 
-    // Create array of all neighbours
-    let neighbours = [];
-    for (let i = 0; i < 6; i++) {
-      // Creates new instance of hex with coordinates of neighbour and pushes to an array
-      neighbours.push(currentHex.getNeighbour(i));
-    }
+      // Get number of alive neighbours
+      let neighboursAlive = 0;
+      for (let i = 0; i < 6; i++) {
+        // Calculate neighbour hex
+        let imaginaryNeighbour = newHex.getNeighbour(i);
 
-    /* Because neighbour variable doesn't contain correct
-      isAlive value, we need to search for the hex with same
-      coordinates in hexes array. */
-    let neighboursAlive = 0;
-    for (let k = 0; k < neighbours.length; k++) {
-      for (let i = 0; i < hexes.length; i++) {
-        if (
-          hexes[i].isAlive &&
-          hexes[i].q === neighbours[k].q &&
-          hexes[i].r === neighbours[k].r &&
-          hexes[i].s === neighbours[k].s
-        ) {
+        // Continue to the next iteration if neighbour doesn't exist 
+        // It is possible for hexes in the corners
+        if (!(imaginaryNeighbour.r in hexes)) {
+          continue;
+        }
+
+        // Get the state of the neighbour and increment neighboursAlive if he is alive
+        let realNeighbour = hexes[imaginaryNeighbour.r][imaginaryNeighbour.q];
+        if (realNeighbour && realNeighbour.isAlive) {
           neighboursAlive++;
-
-          break;
         }
       }
 
-      if (neighboursAlive === neighbours.length) {
-        break;
+      // Change the state of the hex using rules
+      if (newHex.isAlive && (neighboursAlive == 2 || neighboursAlive == 3)) {
+        newHex.isAlive = true;
       }
+      // We shouldn't check if hex is dead because all alive hexes
+      // with 3 alive neighbours passed the first condition
+      else if (neighboursAlive == 3) {
+        newHex.isAlive = true;
+      } else {
+        newHex.isAlive = false;
+      }
+
+      // Append hex to the inner dictionary
+      innerDict[q] = newHex;
     }
 
-    // Change the state of the hex
-    if (newHex.isAlive && (neighboursAlive == 2 || neighboursAlive == 3)) {
-      newHex.isAlive = true;
-    }
-    // We shouldn't check if hex is dead because all alive hexes
-    // with 3 alive neighbours passed the first condition
-    else if (neighboursAlive == 3) {
-      newHex.isAlive = true;
-    } else {
-      newHex.isAlive = false;
-    }
-
-    newHexes.push(newHex);
+    // Append inner dictionary to the outer dictionary
+    newHexes[r] = innerDict;
   }
 
   return newHexes;

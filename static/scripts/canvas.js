@@ -56,20 +56,31 @@ function drawHexLabel(ctx, layout, hex) {
 }
 
 export function shapeRectangle(width, height) {
-  let hexes = [];
+  /*   We store hex objects in two dimensional dict.
+  I wanted to use two dimensional array but
+  our coordinates can be negative and indexes can't.
+  Also indexes aren't in the same order as the coordinates.
+  (q, r) -> coordinates; [r][q] -> indexes
+  Blame the algorithm that generates Hex's for this. */
+  let hexes = {};
 
-  let i1 = -Math.floor(width / 2);
-  let i2 = i1 + width;
+  let q1 = -Math.floor(width / 2);
+  let q2 = q1 + width;
 
-  let j1 = -Math.floor(height / 2);
-  let j2 = j1 + height;
+  let r1 = -Math.floor(height / 2);
+  let r2 = r1 + height;
 
-  for (let j = j1; j < j2; j++) {
-    let jOffset = -Math.floor(j / 2);
-    for (let i = i1 + jOffset; i < i2 + jOffset; i++) {
-      let isAlive = Boolean(Math.round(Math.random())); 
-      hexes.push(constructor(i, j, -i - j, isAlive));
+  for (let r = r1; r < r2; r++) {
+    let innerDict = {};
+    let qOffset = -Math.floor(r / 2);
+
+    for (let q = q1 + qOffset; q < q2 + qOffset; q++) {
+      let isAlive = Boolean(Math.round(Math.random()));
+
+      innerDict[q] = constructor(q, r, -q - r, isAlive);
     }
+
+    hexes[r] = innerDict;
   }
 
   return hexes;
@@ -111,7 +122,9 @@ export function drawGrid(
   ctx.translate(width / 2, height / 2);
 
   // Draw all hexes
-  hexes.forEach((hex) => {
-    drawHex(ctx, layout, hex);
-  });
+  for (const r of Object.keys(hexes)) {
+    for (const q of Object.keys(hexes[r])) {
+      drawHex(ctx, layout, hexes[r][q]);
+    }
+  }
 }
