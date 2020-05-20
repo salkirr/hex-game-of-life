@@ -15,10 +15,15 @@ body {
 }
 
 .button-container {
-  margin-top: 50px;
+  margin-top: 30px;
+}
+
+#play-button,
+#reset-button {
+  width: 200px;
+  height: 50px;
 }
 
 #play-button {
-  width: 200px;
-  height: 50px;
+  margin-right: 50px;
 }

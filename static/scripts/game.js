@@ -4,22 +4,40 @@ import { Layout, Point, Hex } from "./hex.js";
 // State of the game
 let isActive = false;
 
-// Create array of hexes that form a grid
-let hexes = shapeRectangle(90, 40);
+// Set the size of the grid
+let gridWidth = 90;
+let gridHeight = 40;
 
 // Create the instance of the Layout
 const layout = new Layout(Layout.pointy, new Point(10, 10), new Point(0, 0));
 
+// Create array of hexes that form a grid
+let hexes = shapeRectangle(gridWidth, gridHeight);
+
 // Draw the grid
 drawGrid("game", "black", layout, hexes);
 
-// Start/Stop button
+// Get start/stop button
 const playButton = document.querySelector("#play-button");
+
+// Get reset button
+const resetButton = document.querySelector("#reset-button");
 
 // Start or stop the game when the button is clicked
 playButton.addEventListener("click", () => {
   isActive = isActive ? false : true;
-  main();
+
+  // Run the game if it is active
+  if (isActive) {
+    main();
+  }
+});
+
+// Generate new random grid when reset button is clicked
+resetButton.addEventListener("click", () => {
+  hexes = shapeRectangle(gridWidth, gridHeight);
+
+  drawGrid("game", "black", layout, hexes);
 });
 
 async function main() {
@@ -53,7 +71,7 @@ function createNewGeneration(hexes) {
         // Calculate neighbour hex
         let imaginaryNeighbour = newHex.getNeighbour(i);
 
-        // Continue to the next iteration if neighbour doesn't exist 
+        // Continue to the next iteration if neighbour doesn't exist
         // It is possible for hexes in the corners
         if (!(imaginaryNeighbour.r in hexes)) {
           continue;
