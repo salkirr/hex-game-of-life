@@ -1,11 +1,17 @@
 import { shapeRectangle, drawGrid } from "./canvas.js";
 import { Layout, Point, Hex } from "./hex.js";
 
+// Declare variable for setInterval
+let gameLoop;
+
 // State of the game
 let isActive = false;
 
+// Delay between generations (ms)
+const delay = 500;
+
 // Set the size of the grid
-let gridWidth = 90;
+let gridWidth = 100;
 let gridHeight = 40;
 
 // Create the instance of the Layout
@@ -27,9 +33,10 @@ const resetButton = document.querySelector("#reset-button");
 playButton.addEventListener("click", () => {
   isActive = isActive ? false : true;
 
-  // Run the game if it is active
   if (isActive) {
-    main();
+    gameLoop = setInterval(game, delay);
+  } else {
+    clearInterval(gameLoop);
   }
 });
 
@@ -40,17 +47,12 @@ resetButton.addEventListener("click", () => {
   drawGrid("game", "black", layout, hexes);
 });
 
-async function main() {
-  while (isActive) {
-    // Create next generation of hexagons
-    hexes = createNewGeneration(hexes);
+function game() {
+  // Create next generation of hexagons
+  hexes = createNewGeneration(hexes);
 
-    // Draw the grid
-    drawGrid("game", "black", layout, hexes);
-
-    // Sleep for 0.5 sec
-    await new Promise((r) => setTimeout(r, 50));
-  }
+  // Draw the grid
+  drawGrid("game", "black", layout, hexes);
 }
 
 function createNewGeneration(hexes) {
