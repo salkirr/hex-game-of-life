@@ -6,7 +6,28 @@ const lineWidth = 3;
 const colorAlive = "white";
 const colorDead = "black";
 
-const constructor = (q, r, s, isAlive) => {
+// Constructors for different map orientations
+const constructorQRS = (q, r, s, isAlive) => {
+  return new Hex(q, r, s, isAlive);
+};
+
+const constructorSRQ = (s, r, q, isAlive) => {
+  return new Hex(q, r, s, isAlive);
+};
+
+const constructorSQR = (s, q, r, isAlive) => {
+  return new Hex(q, r, s, isAlive);
+};
+
+const constructorRQS = (r, q, s, isAlive) => {
+  return new Hex(q, r, s, isAlive);
+};
+
+const constructorRSQ = (r, s, q, isAlive) => {
+  return new Hex(q, r, s, isAlive);
+};
+
+const constructorQSR = (q, s, r, isAlive) => {
   return new Hex(q, r, s, isAlive);
 };
 
@@ -55,7 +76,7 @@ function drawHexLabel(ctx, layout, hex) {
   );
 }
 
-export function shapeRectangle(width, height) {
+export function shapeRectangle(map_width, map_height) {
   /*   We store hex objects in two dimensional dict.
   I wanted to use two dimensional array but
   our coordinates can be negative and indexes can't.
@@ -64,20 +85,23 @@ export function shapeRectangle(width, height) {
   Blame the algorithm that generates Hex's for this. */
   let hexes = {};
 
-  let q1 = -Math.floor(width / 2);
-  let q2 = q1 + width;
+  // Get min and max q coordinates
+  let q_min = -Math.floor(map_width / 2);
+  let q_max = q_min + map_width;
 
-  let r1 = -Math.floor(height / 2);
-  let r2 = r1 + height;
+  // Get min and max r coordinates
+  let r_min = -Math.floor(map_height / 2);
+  let r_max = r_min + map_height;
 
-  for (let r = r1; r < r2; r++) {
+  // Create hexes
+  for (let r = r_min; r < r_max; r++) {
     let innerDict = {};
-    let qOffset = -Math.floor(r / 2);
+    let rOffset = -Math.floor(r / 2);
 
-    for (let q = q1 + qOffset; q < q2 + qOffset; q++) {
+    for (let q = q_min + rOffset; q < q_max + rOffset; q++) {
       let isAlive = Boolean(Math.round(Math.random()));
 
-      innerDict[q] = constructor(q, r, -q - r, isAlive);
+      innerDict[q] = constructorQRS(q, r, -q - r, isAlive);
     }
 
     hexes[r] = innerDict;
@@ -118,13 +142,14 @@ export function drawGrid(
   ctx.fillStyle = backgroundColor;
   ctx.fillRect(0, 0, width, height);
 
-  // Move the origin of the canvas
+  // Move the origin of the canvas to the center
   ctx.translate(width / 2, height / 2);
 
   // Draw all hexes
   for (const r of Object.keys(hexes)) {
     for (const q of Object.keys(hexes[r])) {
       drawHex(ctx, layout, hexes[r][q]);
+      // drawHexLabel(ctx, layout, hexes[r][q]);
     }
   }
 }
