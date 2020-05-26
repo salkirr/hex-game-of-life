@@ -1,9 +1,4 @@
-import {
-  shapeRectangle,
-  drawGrid,
-  updateCanvasSize,
-  canvas,
-} from "./canvas.js";
+import { drawGrid, drawRandomGrid, updateHexes, hexes } from "./canvas.js";
 import { Layout, Point, Hex } from "./hex.js";
 
 /* -------------------------------------------------------------------------- */
@@ -33,13 +28,6 @@ const layout = new Layout(
   new Point(0, 0)
 );
 
-// Set the size of the grid
-let gridWidth = layout.getGridWidth(canvas.width);
-let gridHeight = layout.getGridHeight(canvas.height);
-
-// Create array of hexes that form a grid
-let hexes = shapeRectangle(gridWidth, gridHeight);
-
 // Get start/stop button
 const playButton = document.querySelector("#play-button");
 
@@ -67,16 +55,7 @@ playButton.addEventListener("click", () => {
 
 // Generate new random grid when randomButton is clicked
 randomButton.addEventListener("click", () => {
-  updateCanvasSize();
-
-  // Set new grid size
-  gridWidth = layout.getGridWidth(canvas.width);
-  gridHeight = layout.getGridHeight(canvas.height);
-
-  // Create new hexes
-  hexes = shapeRectangle(gridWidth, gridHeight);
-
-  drawGrid(layout, backgroundColor, hexes);
+  drawRandomGrid(layout, backgroundColor);
 });
 
 /* -------------------------------------------------------------------------- */
@@ -84,14 +63,14 @@ randomButton.addEventListener("click", () => {
 /* -------------------------------------------------------------------------- */
 
 // Draw the grid for the first time
-drawGrid(layout, backgroundColor, hexes);
+drawRandomGrid(layout, backgroundColor);
 
 function game() {
   // Create next generation of hexagons
-  hexes = createNewGeneration(hexes);
+  updateHexes(createNewGeneration(hexes));
 
   // Draw the grid
-  drawGrid(layout, backgroundColor, hexes);
+  drawGrid(layout, backgroundColor);
 }
 
 function createNewGeneration(hexes) {

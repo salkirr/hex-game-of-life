@@ -31,6 +31,8 @@ export class Hex {
     // Status of the hex (dead or alive)
     if (isAlive !== undefined) {
       this.isAlive = isAlive;
+    } else {
+      this.isAlive = false;
     }
 
     // Check coordinates for correctness

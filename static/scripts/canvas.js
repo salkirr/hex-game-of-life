@@ -10,6 +10,13 @@ export let canvas = document.getElementById("game");
 // Change size of the canvas
 updateCanvasSize();
 
+// Declare dimensions of the grid
+let gridWidth;
+let gridHeight;
+
+// Declare variable for hexes
+export let hexes;
+
 // Style constants
 const lineColor = "#cccbca";
 const lineWidth = 3;
@@ -49,6 +56,13 @@ const constructorQSR = (q, s, r, isAlive) => {
 export function updateCanvasSize() {
   canvas.width = innerWidth;
   canvas.height = innerHeight - 100;
+}
+
+export function updateGridSize(layout) {
+  updateCanvasSize();
+
+  gridWidth = layout.getGridWidth(canvas.width);
+  gridHeight = layout.getGridHeight(canvas.height);
 }
 
 function drawHex(ctx, layout, hex) {
@@ -103,7 +117,7 @@ export function shapeRectangle(gridWidth, gridHeight) {
   Also indexes aren't in the same order as the coordinates.
   (q, r) -> coordinates; [r][q] -> indexes
   Blame the algorithm that generates Hex's for this. */
-  let hexes = {};
+  hexes = {};
 
   // Get min and max q coordinates
   let qMin = -Math.floor(gridWidth / 2);
@@ -119,9 +133,7 @@ export function shapeRectangle(gridWidth, gridHeight) {
     let rOffset = -Math.floor(r / 2);
 
     for (let q = qMin + rOffset; q < qMax + rOffset; q++) {
-      let isAlive = Boolean(Math.round(Math.random()));
-
-      innerDict[q] = constructorQRS(q, r, -q - r, isAlive);
+      innerDict[q] = constructorQRS(q, r, -q - r);
     }
 
     hexes[r] = innerDict;
@@ -130,7 +142,7 @@ export function shapeRectangle(gridWidth, gridHeight) {
   return hexes;
 }
 
-export function drawGrid(layout, backgroundColor, hexes) {
+export function drawGrid(layout, backgroundColor) {
   // Exit if no canvas element
   if (!canvas) {
     console.error("Couldn't find canvas element!");
@@ -156,4 +168,22 @@ export function drawGrid(layout, backgroundColor, hexes) {
       // drawHexLabel(ctx, layout, hexes[r][q]);
     }
   }
+}
+
+export function drawRandomGrid(layout, backgroundColor) {
+  updateGridSize(layout);
+
+  hexes = shapeRectangle(gridWidth, gridHeight);
+
+  for (const r of Object.keys(hexes)) {
+    for (const q of Object.keys(hexes[r])) {
+      hexes[r][q].isAlive = Boolean(Math.round(Math.random())); 
+    }
+  }
+
+  drawGrid(layout, backgroundColor);
+}
+
+export function updateHexes(newHexes) {
+  hexes = newHexes;
 }
