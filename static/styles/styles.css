@@ -14,10 +14,6 @@ body {
   align-items: center;
 }
 
-.button-container {
-  margin-top: 30px;
-}
-
 #play-button,
 #reset-button {
   width: 200px;

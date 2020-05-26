@@ -1,10 +1,29 @@
 import { Hex } from "./hex.js";
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------- GLOBAL VARIABLES ------------------------------ */
+/* -------------------------------------------------------------------------- */
+
+// Canvas element
+export let canvas = document.getElementById("game");
+
+// Variables for canvas dimensions
+export const canvasWidth = innerWidth;
+export const canvasHeight = innerHeight - 100;
+
+// Change size of the canvas
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
+
 // Style constants
 const lineColor = "#cccbca";
 const lineWidth = 3;
 const colorAlive = "white";
 const colorDead = "black";
+
+/* -------------------------------------------------------------------------- */
+/* ------------------------------- FUNCTIONS -------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 // Constructors for different map orientations
 const constructorQRS = (q, r, s, isAlive) => {
@@ -76,7 +95,7 @@ function drawHexLabel(ctx, layout, hex) {
   );
 }
 
-export function shapeRectangle(map_width, map_height) {
+export function shapeRectangle(gridWidth, gridHeight) {
   /*   We store hex objects in two dimensional dict.
   I wanted to use two dimensional array but
   our coordinates can be negative and indexes can't.
@@ -86,19 +105,19 @@ export function shapeRectangle(map_width, map_height) {
   let hexes = {};
 
   // Get min and max q coordinates
-  let q_min = -Math.floor(map_width / 2);
-  let q_max = q_min + map_width;
+  let qMin = -Math.floor(gridWidth / 2);
+  let qMax = qMin + gridWidth;
 
   // Get min and max r coordinates
-  let r_min = -Math.floor(map_height / 2);
-  let r_max = r_min + map_height;
+  let rMin = -Math.floor(gridHeight / 2);
+  let rMax = rMin + gridHeight;
 
   // Create hexes
-  for (let r = r_min; r < r_max; r++) {
+  for (let r = rMin; r < rMax; r++) {
     let innerDict = {};
     let rOffset = -Math.floor(r / 2);
 
-    for (let q = q_min + rOffset; q < q_max + rOffset; q++) {
+    for (let q = qMin + rOffset; q < qMax + rOffset; q++) {
       let isAlive = Boolean(Math.round(Math.random()));
 
       innerDict[q] = constructorQRS(q, r, -q - r, isAlive);
@@ -110,40 +129,24 @@ export function shapeRectangle(map_width, map_height) {
   return hexes;
 }
 
-export function drawGrid(
-  id,
-  backgroundColor,
-  layout,
-  hexes = shapeRectangle(50, 20)
-) {
-  // Find the canvas element on the page
-  let canvas = document.getElementById(id);
+export function drawGrid(layout, backgroundColor, hexes) {
+  // Exit if no canvas element
   if (!canvas) {
+    console.error("Couldn't find canvas element!");
     return;
   }
 
-  // Get 2d context object
   let ctx = canvas.getContext("2d");
 
-  canvas.width = innerWidth;
-  canvas.height = innerHeight - 200;
-
-  let width = canvas.width;
-  let height = canvas.height;
-
-  // ??? (I don't know what it does)
-  /*   if (window.devicePixelRatio && window.devicePixelRatio != 1) {
-    canvas.width = width * window.devicePixelRatio;
-    canvas.height = height * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  } */
+  // Reset previous translation to the center
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   // Apply background color
   ctx.fillStyle = backgroundColor;
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Move the origin of the canvas to the center
-  ctx.translate(width / 2, height / 2);
+  ctx.translate(canvas.width / 2, canvas.height / 2);
 
   // Draw all hexes
   for (const r of Object.keys(hexes)) {

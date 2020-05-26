@@ -1,5 +1,9 @@
-import { shapeRectangle, drawGrid } from "./canvas.js";
+import { shapeRectangle, drawGrid, canvas, canvasWidth, canvasHeight } from "./canvas.js";
 import { Layout, Point, Hex } from "./hex.js";
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------- GLOBAL VARIABLES ------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 // Declare variable for setInterval
 let gameLoop;
@@ -10,18 +14,26 @@ let isActive = false;
 // Delay between generations (ms)
 const delay = 500;
 
-// Set the size of the grid
-let gridWidth = 100;
-let gridHeight = 40;
+// Canvas background color
+const backgroundColor = "black";
+
+// Width and height of hexes
+let hexWidth = 10;
+let hexHeight = 10;
 
 // Create the instance of the Layout
-const layout = new Layout(Layout.pointy, new Point(10, 10), new Point(0, 0));
+const layout = new Layout(
+  Layout.pointy,
+  new Point(hexWidth, hexHeight),
+  new Point(0, 0)
+);
+
+// Set the size of the grid
+let gridWidth = layout.getGridWidth(canvas.width);
+let gridHeight = layout.getGridHeight(canvas.height);
 
 // Create array of hexes that form a grid
 let hexes = shapeRectangle(gridWidth, gridHeight);
-
-// Draw the grid
-drawGrid("game", "black", layout, hexes);
 
 // Get start/stop button
 const playButton = document.querySelector("#play-button");
@@ -29,30 +41,54 @@ const playButton = document.querySelector("#play-button");
 // Get reset button
 const resetButton = document.querySelector("#reset-button");
 
+/* -------------------------------------------------------------------------- */
+/* ----------------------------- BUTTON EVENTS ------------------------------ */
+/* -------------------------------------------------------------------------- */
+
 // Start or stop the game when the button is clicked
 playButton.addEventListener("click", () => {
   isActive = isActive ? false : true;
 
   if (isActive) {
+    resetButton.disabled = true;
+
     gameLoop = setInterval(game, delay);
   } else {
+    resetButton.disabled = false;
+
     clearInterval(gameLoop);
   }
 });
 
 // Generate new random grid when reset button is clicked
 resetButton.addEventListener("click", () => {
+  // Set new canvas size
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+
+  // Set new grid size
+  gridWidth = layout.getGridWidth(canvas.width);
+  gridHeight = layout.getGridHeight(canvas.height);
+
+  // Create new hexes
   hexes = shapeRectangle(gridWidth, gridHeight);
 
-  drawGrid("game", "black", layout, hexes);
+  drawGrid(layout, backgroundColor, hexes);
 });
+
+/* -------------------------------------------------------------------------- */
+/* ------------------------------- FUNCTIONS -------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+// Draw the grid for the first time
+drawGrid(layout, backgroundColor, hexes);
 
 function game() {
   // Create next generation of hexagons
   hexes = createNewGeneration(hexes);
 
   // Draw the grid
-  drawGrid("game", "black", layout, hexes);
+  drawGrid(layout, backgroundColor, hexes);
 }
 
 function createNewGeneration(hexes) {
@@ -79,7 +115,8 @@ function createNewGeneration(hexes) {
           continue;
         }
 
-        // Get the state of the neighbour and increment neighboursAlive if he is alive
+        // Get the state of the neighbour
+        // And increment neighboursAlive if neighbour is alive
         let realNeighbour = hexes[imaginaryNeighbour.r][imaginaryNeighbour.q];
         if (realNeighbour && realNeighbour.isAlive) {
           neighboursAlive++;

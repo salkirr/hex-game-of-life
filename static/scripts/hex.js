@@ -100,14 +100,21 @@ export class Layout {
 
     // Screen coordinates of the origin point for the layout
     this.origin = origin;
+
+    // Padding on vertical and horizontal axis of canvas
+    this.padding = new Point(50, 50);
   }
 
   // Convert cube coordinates to screen coordinates
   convertHexToPixel(hex) {
     let x =
-      (this.orientation.forward_matrix[0] * hex.q + this.orientation.forward_matrix[1] * hex.r) * this.size.x;
+      (this.orientation.forward_matrix[0] * hex.q +
+        this.orientation.forward_matrix[1] * hex.r) *
+      this.size.x;
     let y =
-      (this.orientation.forward_matrix[2] * hex.q + this.orientation.forward_matrix[3] * hex.r) * this.size.y;
+      (this.orientation.forward_matrix[2] * hex.q +
+        this.orientation.forward_matrix[3] * hex.r) *
+      this.size.y;
 
     return new Point(x + this.origin.x, y + this.origin.y);
   }
@@ -119,8 +126,12 @@ export class Layout {
       (point.y - this.origin.y) / this.size.y
     );
 
-    let q = this.orientation.inverse_matrix[0] * pt.x + this.orientation.inverse_matrix[1] * pt.y;
-    let r = this.orientation.inverse_matrix[2] * pt.x + this.orientation.inverse_matrix[3] * pt.y;
+    let q =
+      this.orientation.inverse_matrix[0] * pt.x +
+      this.orientation.inverse_matrix[1] * pt.y;
+    let r =
+      this.orientation.inverse_matrix[2] * pt.x +
+      this.orientation.inverse_matrix[3] * pt.y;
 
     return new Hex(q, r, -q - r);
   }
@@ -146,5 +157,21 @@ export class Layout {
     }
 
     return corners;
+  }
+
+  // Get number of hexes in row
+  getGridWidth(canvasWidth) {
+    let rowWidth = canvasWidth - this.padding.x;
+    let hexWidth = Math.sqrt(3) * this.size.x;
+
+    return Math.floor(rowWidth / hexWidth - 0.5);
+  }
+
+  // Get number of hexes in a column
+  getGridHeight(canvasHeight) {
+    let colHeight = canvasHeight - this.padding.y;
+    let hexHeight = 2 * this.size.y;
+
+    return Math.floor(((4 * colHeight) / hexHeight - 1) / 3);
   }
 }
