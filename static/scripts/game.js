@@ -1,4 +1,9 @@
-import { shapeRectangle, drawGrid, canvas, canvasWidth, canvasHeight } from "./canvas.js";
+import {
+  shapeRectangle,
+  drawGrid,
+  updateCanvasSize,
+  canvas,
+} from "./canvas.js";
 import { Layout, Point, Hex } from "./hex.js";
 
 /* -------------------------------------------------------------------------- */
@@ -62,9 +67,7 @@ playButton.addEventListener("click", () => {
 
 // Generate new random grid when randomButton is clicked
 randomButton.addEventListener("click", () => {
-  // Set new canvas size
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
+  updateCanvasSize();
 
   // Set new grid size
   gridWidth = layout.getGridWidth(canvas.width);

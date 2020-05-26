@@ -7,13 +7,8 @@ import { Hex } from "./hex.js";
 // Canvas element
 export let canvas = document.getElementById("game");
 
-// Variables for canvas dimensions
-export const canvasWidth = innerWidth;
-export const canvasHeight = innerHeight - 100;
-
 // Change size of the canvas
-canvas.width = canvasWidth;
-canvas.height = canvasHeight;
+updateCanvasSize();
 
 // Style constants
 const lineColor = "#cccbca";
@@ -49,6 +44,12 @@ const constructorRSQ = (r, s, q, isAlive) => {
 const constructorQSR = (q, s, r, isAlive) => {
   return new Hex(q, r, s, isAlive);
 };
+
+// Change canvas size if windows size has changed
+export function updateCanvasSize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight - 100;
+}
 
 function drawHex(ctx, layout, hex) {
   // Get coordinates of all corners
