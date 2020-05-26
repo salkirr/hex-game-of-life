@@ -38,8 +38,8 @@ let hexes = shapeRectangle(gridWidth, gridHeight);
 // Get start/stop button
 const playButton = document.querySelector("#play-button");
 
-// Get reset button
-const resetButton = document.querySelector("#reset-button");
+// Get random-button
+const randomButton = document.querySelector("#random-button");
 
 /* -------------------------------------------------------------------------- */
 /* ----------------------------- BUTTON EVENTS ------------------------------ */
@@ -50,18 +50,18 @@ playButton.addEventListener("click", () => {
   isActive = isActive ? false : true;
 
   if (isActive) {
-    resetButton.disabled = true;
+    randomButton.disabled = true;
 
     gameLoop = setInterval(game, delay);
   } else {
-    resetButton.disabled = false;
+    randomButton.disabled = false;
 
     clearInterval(gameLoop);
   }
 });
 
-// Generate new random grid when reset button is clicked
-resetButton.addEventListener("click", () => {
+// Generate new random grid when randomButton is clicked
+randomButton.addEventListener("click", () => {
   // Set new canvas size
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
