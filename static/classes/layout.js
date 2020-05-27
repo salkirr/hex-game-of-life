@@ -38,9 +38,6 @@ export class Layout {
 
     // Screen coordinates of the origin point for the layout
     this.origin = origin;
-
-    // Padding on vertical and horizontal axis of canvas
-    this.padding = new Point(50, 50);
   }
 
   hexRound(hex) {
@@ -116,21 +113,5 @@ export class Layout {
     }
 
     return corners;
-  }
-
-  // Get number of hexes in row
-  getGridWidth(canvasWidth) {
-    let rowWidth = canvasWidth - this.padding.x;
-    let hexWidth = Math.sqrt(3) * this.size;
-
-    return Math.floor(rowWidth / hexWidth - 0.5);
-  }
-
-  // Get number of hexes in a column
-  getGridHeight(canvasHeight) {
-    let colHeight = canvasHeight - this.padding.y;
-    let hexHeight = 2 * this.size;
-
-    return Math.floor(((4 * colHeight) / hexHeight - 1) / 3);
   }
 }

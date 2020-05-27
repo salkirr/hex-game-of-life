@@ -1,7 +1,12 @@
+import { Point } from "./point.js";
+
 export class Canvas {
   constructor(canvas_id) {
     this.canvasElem = document.getElementById(canvas_id);
     this.ctx = this.canvasElem.getContext("2d");
+
+    // Padding on vertical and horizontal axis of canvas
+    this.padding = new Point(50, 50);
 
     // Style properties
     this.lineColor = "#cccbca";

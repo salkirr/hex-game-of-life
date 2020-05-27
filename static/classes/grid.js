@@ -10,12 +10,28 @@ export class Grid {
     this.gridHeight;
   }
 
+  // Get number of hexes in a row
+  updateGridWidth(canvas, cellSize) {
+    let rowWidth = canvas.canvasElem.width - canvas.padding.x;
+    let hexWidth = Math.sqrt(3) * cellSize;
+
+    this.gridWidth =  Math.floor(rowWidth / hexWidth - 0.5);
+  }
+
+  // Get number of hexes in a column
+  updateGridHeight(canvas, cellSize) {
+    let colHeight = canvas.canvasElem.height - canvas.padding.y;
+    let hexHeight = 2 * cellSize;
+
+    this.gridHeight = Math.floor(((4 * colHeight) / hexHeight - 1) / 3);
+  }
+
   /* Update grid dimensions if canvas changed it's dimensions */
   updateGridDimensions(layout, canvas) {
     canvas.updateCanvasDimensions();
 
-    this.gridWidth = layout.getGridWidth(canvas.canvasElem.width);
-    this.gridHeight = layout.getGridHeight(canvas.canvasElem.height);
+    this.updateGridWidth(canvas, layout.size);
+    this.updateGridHeight(canvas, layout.size);
   }
 
   /* Create rectangular grid */
