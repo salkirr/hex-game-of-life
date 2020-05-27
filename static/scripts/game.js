@@ -34,6 +34,9 @@ const playButton = document.querySelector("#play-button");
 // Get random-button
 const randomButton = document.querySelector("#random-button");
 
+// Get Clear button
+const clearButton = document.querySelector("#clear-button");
+
 /* -------------------------------------------------------------------------- */
 /* ----------------------------- BUTTON EVENTS ------------------------------ */
 /* -------------------------------------------------------------------------- */
@@ -43,17 +46,29 @@ playButton.addEventListener("click", () => {
   isActive = isActive ? false : true;
 
   if (isActive) {
+    // Disable buttons
     randomButton.disabled = true;
+    clearButton.disabled = true;
+
     gameLoop = setInterval(game, delay);
   } else {
+    // Enable buttons
     randomButton.disabled = false;
+    clearButton.disabled = false;
+
     clearInterval(gameLoop);
   }
 });
 
-// Generate new random grid when randomButton is clicked
+// Draw new random grid when randomButton is clicked
 randomButton.addEventListener("click", () => {
   grid.createRandomGrid(layout, canvas);
+  canvas.drawGrid(layout, grid.cells);
+});
+
+// Draw new empty grid when Clear button is clicked
+clearButton.addEventListener("click", () => {
+  grid.createEmptyGrid(layout, canvas);
   canvas.drawGrid(layout, grid.cells);
 });
 
