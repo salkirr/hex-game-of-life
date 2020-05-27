@@ -14,7 +14,7 @@ class Orientation {
   }
 }
 
-// TODO: Wrtite explanation
+/* Handles everything related to hex coordinates */
 export class Layout {
   // Static properties for different orientations of hexagons
   static pointy = new Orientation(
@@ -41,6 +41,31 @@ export class Layout {
 
     // Padding on vertical and horizontal axis of canvas
     this.padding = new Point(50, 50);
+  }
+
+  hexRound(hex) {
+    let qRounded = Math.round(hex.q);
+    let rRounded = Math.round(hex.r);
+    let sRounded = Math.round(hex.s);
+
+    let qDiff = Math.abs(qRounded - hex.q);
+    let rDiff = Math.abs(rRounded - hex.r);
+    let sDiff = Math.abs(sRounded - hex.s);
+
+    /*
+      We reset the coordinate with the most difference
+      because rounded coordinates may not satisfy the
+      condition: q + r + s = 0 
+    */
+    if (qDiff > rDiff && qDiff > sDiff) {
+      qRounded = -rRounded - sRounded;
+    } else if (rDiff > qDiff && rDiff > sDiff) {
+      rRounded = -qRounded - sRounded;
+    } else {
+      sRounded = -qRounded - rRounded;
+    }
+
+    return new Hex(qRounded, rRounded, sRounded);
   }
 
   // Convert cube coordinates to screen coordinates
@@ -70,8 +95,7 @@ export class Layout {
     let r =
       this.orientation.inverse_matrix[2] * pt.x +
       this.orientation.inverse_matrix[3] * pt.y;
-
-    return new Hex(q, r, -q - r);
+    return hexRound(new Hex(q, r, -q - r));
   }
 
   // Get coordinates offset for the corner of the hexagon (relative to the center of the hexagon)
