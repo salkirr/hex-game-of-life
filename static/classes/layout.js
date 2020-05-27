@@ -1,75 +1,10 @@
-export class Point {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-}
+import { Hex } from "./hex.js";
+import { Point } from "./point.js";
 
-export class Hex {
-  // Static property for vectors of all posible directions
-  static directions = [
-    new Hex(1, 0, -1),
-    new Hex(1, -1, 0),
-    new Hex(0, -1, 1),
-    new Hex(-1, 0, 1),
-    new Hex(-1, 1, 0),
-    new Hex(0, 1, -1),
-  ];
-
-  // Length of the this hexagon's vector
-  get length() {
-    return (Math.abs(this.q) + Math.abs(this.r) + Math.abs(this.s)) / 2;
-  }
-
-  constructor(q, r, s, isAlive) {
-    // We are using cube coordinate system
-    // q -> x, r -> z, s -> y
-    this.q = q;
-    this.r = r;
-    this.s = s;
-
-    // Status of the hex (dead or alive)
-    if (isAlive !== undefined) {
-      this.isAlive = isAlive;
-    } else {
-      this.isAlive = false;
-    }
-
-    // Check coordinates for correctness
-    if (Math.round(q + r + s) !== 0) {
-      throw new Error(`q + r + s must be equal 0, was ${q + r + s}`);
-    }
-  }
-
-  static getDirection(direction) {
-    return Hex.directions[direction];
-  }
-
-  // Add two hexagons' vectors
-  add(hex) {
-    return new Hex(this.q + hex.q, this.r + hex.r, this.s + hex.s);
-  }
-
-  // Subtract two hexagons' vectors
-  subtract(hex) {
-    return new Hex(this.q - hex.q, this.r - hex.r, this.s - hex.s);
-  }
-
-  // Get length of the vector between two hexagons
-  getDistance(hex) {
-    return this.subtract(hex).length;
-  }
-
-  // Get this hexagon neighbour in the indicated direction
-  getNeighbour(direction) {
-    return this.add(Hex.getDirection(direction));
-  }
-}
-
-/* 
-    Contains forward and inverse matrices for conversions between
-  hex coordinates and screen coordinates.
-    Also contains start angle which are used to draw the corners.
+/*
+  Contains forward and inverse matrices for conversions between
+  hex coordinates and screen coordinates. Also contains start
+  angle which are used to draw the corners.
 */
 class Orientation {
   constructor(forward_matrix, inverse_matrix, start_angle) {
@@ -79,6 +14,7 @@ class Orientation {
   }
 }
 
+// TODO: Wrtite explanation
 export class Layout {
   // Static properties for different orientations of hexagons
   static pointy = new Orientation(
@@ -97,7 +33,7 @@ export class Layout {
     // Orientation of the hexagons (pointy or flat-top)
     this.orientation = orientation;
 
-    // Size of side of the hexagon (uses Point type to keep different sizes for each dimension)
+    // Size of side of the hexagon
     this.size = size;
 
     // Screen coordinates of the origin point for the layout
@@ -112,11 +48,11 @@ export class Layout {
     let x =
       (this.orientation.forward_matrix[0] * hex.q +
         this.orientation.forward_matrix[1] * hex.r) *
-      this.size.x;
+      this.size;
     let y =
       (this.orientation.forward_matrix[2] * hex.q +
         this.orientation.forward_matrix[3] * hex.r) *
-      this.size.y;
+      this.size;
 
     return new Point(x + this.origin.x, y + this.origin.y);
   }
@@ -124,8 +60,8 @@ export class Layout {
   // Convert screen coordinates to cube coordinates
   convertPixelToHex(point) {
     let pt = new Point(
-      (point.x - this.origin.x) / this.size.x,
-      (point.y - this.origin.y) / this.size.y
+      (point.x - this.origin.x) / this.size,
+      (point.y - this.origin.y) / this.size
     );
 
     let q =
@@ -142,10 +78,7 @@ export class Layout {
   getHexCornerOffset(corner) {
     let angle = (2.0 * Math.PI * (this.orientation.start_angle - corner)) / 6.0;
 
-    return new Point(
-      this.size.x * Math.cos(angle),
-      this.size.y * Math.sin(angle)
-    );
+    return new Point(this.size * Math.cos(angle), this.size * Math.sin(angle));
   }
 
   // Get coordinates for all corners of the hexagon
@@ -164,7 +97,7 @@ export class Layout {
   // Get number of hexes in row
   getGridWidth(canvasWidth) {
     let rowWidth = canvasWidth - this.padding.x;
-    let hexWidth = Math.sqrt(3) * this.size.x;
+    let hexWidth = Math.sqrt(3) * this.size;
 
     return Math.floor(rowWidth / hexWidth - 0.5);
   }
@@ -172,7 +105,7 @@ export class Layout {
   // Get number of hexes in a column
   getGridHeight(canvasHeight) {
     let colHeight = canvasHeight - this.padding.y;
-    let hexHeight = 2 * this.size.y;
+    let hexHeight = 2 * this.size;
 
     return Math.floor(((4 * colHeight) / hexHeight - 1) / 3);
   }

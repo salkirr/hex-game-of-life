@@ -1,11 +1,13 @@
-import { drawGrid, drawRandomGrid, updateHexes, hexes } from "./canvas.js";
-import { Layout, Point, Hex } from "./hex.js";
+import { Canvas } from "../classes/canvas.js";
+import { Point } from "../classes/point.js";
+import { Layout } from "../classes/layout.js";
+import { Grid } from "../classes/grid.js";
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------- GLOBAL VARIABLES ------------------------------ */
 /* -------------------------------------------------------------------------- */
 
-// Declare variable for setInterval
+// Declare variable for setInterval function
 let gameLoop;
 
 // State of the game
@@ -14,19 +16,17 @@ let isActive = false;
 // Delay between generations (ms)
 const delay = 500;
 
-// Canvas background color
-const backgroundColor = "black";
+// Dimensions of hexes
+let cellSize = 10;
 
-// Width and height of hexes
-let hexWidth = 10;
-let hexHeight = 10;
+// Coordinates of the center of the rectangle
+let centerPoint = new Point(0, 0);
 
-// Create the instance of the Layout
-const layout = new Layout(
-  Layout.pointy,
-  new Point(hexWidth, hexHeight),
-  new Point(0, 0)
-);
+const layout = new Layout(Layout.pointy, cellSize, centerPoint);
+
+const canvas = new Canvas("game");
+
+const grid = new Grid();
 
 // Get start/stop button
 const playButton = document.querySelector("#play-button");
@@ -44,90 +44,31 @@ playButton.addEventListener("click", () => {
 
   if (isActive) {
     randomButton.disabled = true;
-
     gameLoop = setInterval(game, delay);
   } else {
     randomButton.disabled = false;
-
     clearInterval(gameLoop);
   }
 });
 
 // Generate new random grid when randomButton is clicked
 randomButton.addEventListener("click", () => {
-  drawRandomGrid(layout, backgroundColor);
+  grid.createRandomGrid(layout, canvas);
+  canvas.drawGrid(layout, grid.cells);
 });
 
 /* -------------------------------------------------------------------------- */
-/* ------------------------------- FUNCTIONS -------------------------------- */
+/* --------------------------------- MAIN ----------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 // Draw the grid for the first time
-drawRandomGrid(layout, backgroundColor);
+grid.createEmptyGrid(layout, canvas);
+canvas.drawGrid(layout, grid.cells);
 
 function game() {
   // Create next generation of hexagons
-  updateHexes(createNewGeneration(hexes));
+  grid.createNextGeneration();
 
   // Draw the grid
-  drawGrid(layout, backgroundColor);
-}
-
-function createNewGeneration(hexes) {
-  // Create new outer dict for hexes
-  let newHexes = {};
-
-  // Iterate through all hexes and calculate their next state
-  for (const r of Object.keys(hexes)) {
-    // Create inner dict for hexes
-    let innerDict = {};
-
-    for (const q of Object.keys(hexes[r])) {
-      let newHex = cloneHex(hexes[r][q]);
-
-      // Get number of alive neighbours
-      let neighboursAlive = 0;
-      for (let i = 0; i < 6; i++) {
-        // Calculate neighbour hex
-        let imaginaryNeighbour = newHex.getNeighbour(i);
-
-        // Continue to the next iteration if neighbour doesn't exist
-        // It is possible for hexes in the corners
-        if (!(imaginaryNeighbour.r in hexes)) {
-          continue;
-        }
-
-        // Get the state of the neighbour
-        // And increment neighboursAlive if neighbour is alive
-        let realNeighbour = hexes[imaginaryNeighbour.r][imaginaryNeighbour.q];
-        if (realNeighbour && realNeighbour.isAlive) {
-          neighboursAlive++;
-        }
-      }
-
-      // Change the state of the hex using rules
-      if (newHex.isAlive && (neighboursAlive == 2 || neighboursAlive == 3)) {
-        newHex.isAlive = true;
-      }
-      // We shouldn't check if hex is dead because all alive hexes
-      // with 3 alive neighbours passed the first condition
-      else if (neighboursAlive == 3) {
-        newHex.isAlive = true;
-      } else {
-        newHex.isAlive = false;
-      }
-
-      // Append hex to the inner dictionary
-      innerDict[q] = newHex;
-    }
-
-    // Append inner dictionary to the outer dictionary
-    newHexes[r] = innerDict;
-  }
-
-  return newHexes;
-}
-
-function cloneHex(hex) {
-  return new Hex(hex.q, hex.r, hex.s, hex.isAlive);
+  canvas.drawGrid(layout, grid.cells);
 }
