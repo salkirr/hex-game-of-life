@@ -36,11 +36,11 @@ export class Layout {
     // Size of side of the hexagon
     this.size = size;
 
-    // Screen coordinates of the origin point for the layout
+    // Canvas coordinates of the origin point for the layout
     this.origin = origin;
   }
 
-  hexRound(hex) {
+  roundHexCoordinates(hex) {
     let qRounded = Math.round(hex.q);
     let rRounded = Math.round(hex.r);
     let sRounded = Math.round(hex.s);
@@ -65,8 +65,15 @@ export class Layout {
     return new Hex(qRounded, rRounded, sRounded);
   }
 
-  // Convert cube coordinates to screen coordinates
-  convertHexToPixel(hex) {
+  convertScreenToCanvas(screenPoint, canvasOrigin) {
+    let x = screenPoint.x - canvasOrigin.x;
+    let y = screenPoint.y - canvasOrigin.y;
+
+    return new Point(x, y);
+  }
+
+  // Convert cube coordinates to canvas coordinates
+  convertHexToCanvas(hex) {
     let x =
       (this.orientation.forward_matrix[0] * hex.q +
         this.orientation.forward_matrix[1] * hex.r) *
@@ -79,8 +86,8 @@ export class Layout {
     return new Point(x + this.origin.x, y + this.origin.y);
   }
 
-  // Convert screen coordinates to cube coordinates
-  convertPixelToHex(point) {
+  // Convert canvas coordinates to cube coordinates
+  convertCanvasToHex(point) {
     let pt = new Point(
       (point.x - this.origin.x) / this.size,
       (point.y - this.origin.y) / this.size
@@ -92,7 +99,14 @@ export class Layout {
     let r =
       this.orientation.inverse_matrix[2] * pt.x +
       this.orientation.inverse_matrix[3] * pt.y;
-    return hexRound(new Hex(q, r, -q - r));
+
+    return this.roundHexCoordinates(new Hex(q, r, -q - r));
+  }
+
+  convertScreenToHex(screenPoint, canvasOrigin) {
+    let canvasPoint = this.convertScreenToCanvas(screenPoint, canvasOrigin);
+
+    return this.convertCanvasToHex(canvasPoint);
   }
 
   // Get coordinates offset for the corner of the hexagon (relative to the center of the hexagon)
@@ -105,7 +119,7 @@ export class Layout {
   // Get coordinates for all corners of the hexagon
   getPolygonCorners(hex) {
     let corners = [];
-    let center = this.convertHexToPixel(hex);
+    let center = this.convertHexToCanvas(hex);
 
     for (let i = 0; i < 6; i++) {
       let offset = this.getHexCornerOffset(i);

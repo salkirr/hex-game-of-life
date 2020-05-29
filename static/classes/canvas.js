@@ -8,12 +8,22 @@ export class Canvas {
     // Padding on vertical and horizontal axis of canvas
     this.padding = new Point(50, 50);
 
+    // Canvas origin coordinates in screen coordinate system
+    this.origin;
+
     // Style properties
     this.lineColor = "#cccbca";
     this.lineWidth = 3;
     this.colorAlive = "white";
     this.colorEmpty = "black";
     this.backgroundColor = "black";
+  }
+
+  updateCanvasOrigin() {
+    this.origin = new Point(
+      this.canvasElem.width / 2,
+      this.canvasElem.height / 2
+    );
   }
 
   updateCanvasDimensions() {
@@ -54,7 +64,7 @@ export class Canvas {
       0.5 * Math.min(Math.abs(layout.size.x), Math.abs(layout.size.y))
     );
 
-    let center = layout.convertHexToPixel(cell);
+    let center = layout.convertHexToCanvas(cell);
 
     // Draw text
     this.ctx.fillStyle = "blue";
@@ -72,12 +82,14 @@ export class Canvas {
     // Reset previous translation to the center
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+    this.updateCanvasOrigin();
+
     // Apply background color
     this.ctx.fillStyle = this.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvasElem.width, this.canvasElem.height);
 
     // Move the origin of the canvas to the center
-    this.ctx.translate(this.canvasElem.width / 2, this.canvasElem.height / 2);
+    this.ctx.translate(this.origin.x, this.origin.y);
 
     // Draw all hexes
     for (const r of Object.keys(cells)) {

@@ -10,6 +10,14 @@ import { Grid } from "../classes/grid.js";
 // Declare variable for setInterval function
 let gameLoop;
 
+// Watch if user is drawing
+let isInteracting = false;
+let isCreating = false;
+
+// Watch on what cell were cursor when mouse was clicked
+let previousCell;
+let currentCell;
+
 // State of the game
 let isActive = false;
 
@@ -38,8 +46,59 @@ const randomButton = document.querySelector("#random-button");
 const clearButton = document.querySelector("#clear-button");
 
 /* -------------------------------------------------------------------------- */
-/* ----------------------------- BUTTON EVENTS ------------------------------ */
+/* -------------------------------- EVENTS ---------------------------------- */
 /* -------------------------------------------------------------------------- */
+
+/* 
+  Drawing works this way:
+  - If you clicked on an empty cell then you will only
+  create cells until mouse button is unclicked.
+
+  - If you clicked on an alive cell you will only kill cells
+  until mouse button is unclicked.
+*/
+canvas.canvasElem.addEventListener("mousedown", (event) => {
+  isInteracting = true;
+
+  let imaginaryCell = layout.convertScreenToHex(
+    new Point(event.x, event.y),
+    canvas.origin
+  );
+
+  currentCell = grid.getCell(imaginaryCell);
+
+  isCreating = currentCell.isAlive;
+
+  changeCurrentCell();
+});
+
+canvas.canvasElem.addEventListener("mousemove", (event) => {
+  if (isInteracting) {
+    let imaginaryCell = layout.convertScreenToHex(
+      new Point(event.x, event.y),
+      canvas.origin
+    );
+
+    currentCell = grid.getCell(imaginaryCell);
+    changeCurrentCell();
+  }
+});
+
+canvas.canvasElem.addEventListener("mouseup", (event) => {
+  if (isInteracting) {
+    let imaginaryCell = layout.convertScreenToHex(
+      new Point(event.x, event.y),
+      canvas.origin
+    );
+
+    currentCell = grid.getCell(imaginaryCell);
+
+    changeCurrentCell();
+
+    isInteracting = false;
+    previousCell = undefined;
+  }
+});
 
 // Start or stop the game when the button is clicked
 playButton.addEventListener("click", () => {
@@ -86,4 +145,24 @@ function game() {
 
   // Draw the grid
   canvas.drawGrid(layout, grid.cells);
+}
+
+function changeCurrentCell() {
+  if (currentCell.isAlive === !isCreating) {
+    return;
+  }
+
+  if (
+    previousCell !== undefined &&
+    currentCell.q === previousCell.q &&
+    currentCell.r === previousCell.r
+  ) {
+    return;
+  }
+
+  grid.setCellState(currentCell, !isCreating);
+
+  canvas.drawGrid(layout, grid.cells);
+
+  previousCell = currentCell;
 }

@@ -15,7 +15,7 @@ export class Grid {
     let rowWidth = canvas.canvasElem.width - canvas.padding.x;
     let hexWidth = Math.sqrt(3) * cellSize;
 
-    this.gridWidth =  Math.floor(rowWidth / hexWidth - 0.5);
+    this.gridWidth = Math.floor(rowWidth / hexWidth - 0.5);
   }
 
   // Get number of hexes in a column
@@ -32,6 +32,23 @@ export class Grid {
 
     this.updateGridWidth(canvas, layout.size);
     this.updateGridHeight(canvas, layout.size);
+  }
+
+  // Get cell from current grid
+  getCell(imaginaryCell) {
+    if (
+      !this.cells[imaginaryCell.r] ||
+      !this.cells[imaginaryCell.r][imaginaryCell.q]
+    ) {
+      console.log(`Not found ${imaginaryCell.q} ${imaginaryCell.r}`);
+      return;
+    }
+
+    return this.cells[imaginaryCell.r][imaginaryCell.q];
+  }
+
+  setCellState(cell, isAlive) {
+    this.cells[cell.r][cell.q].isAlive = isAlive;
   }
 
   /* Create rectangular grid */
@@ -99,21 +116,17 @@ export class Grid {
         // Get number of alive neighbours
         let neighboursAlive = 0;
         for (let i = 0; i < 6; i++) {
-          // Calculate neighbour hex
-          let imaginaryNeighbour = newCell.getNeighbour(i);
+          // Get neighbour hex
+          let neighbour = this.getCell(newCell.getNeighbour(i));
 
           // Continue to the next iteration if neighbour doesn't exist
           // It is possible for hexes in the corners
-          if (!(imaginaryNeighbour.r in this.cells)) {
+          if (!neighbour) {
             continue;
           }
 
-          // Get the state of the neighbour
-          // And increment neighboursAlive if neighbour is alive
-          let realNeighbour = this.cells[imaginaryNeighbour.r][
-            imaginaryNeighbour.q
-          ];
-          if (realNeighbour && realNeighbour.isAlive) {
+          // Increment neighboursAlive if neighbour is alive
+          if (neighbour && neighbour.isAlive) {
             neighboursAlive++;
           }
         }
