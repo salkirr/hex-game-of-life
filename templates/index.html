@@ -3,7 +3,7 @@
 <html>
   <head>
     <title>Game Of Life</title>
-    <link rel="stylesheet" href="static/styles/styles.css" />
+    <link rel="stylesheet" href="static/styles/styles.css?v={{ version }}" />
   </head>
   <body>
     <div>
@@ -14,6 +14,12 @@
       <button id="random-button">Random</button>
       <button id="clear-button">Clear</button>
     </div>
-    <script type="module" src="static/scripts/game.js"></script>
+    <script type="module" src="static/scripts/game.js?v={{ version }}"></script>
+    <script type="module" src="static/classes/canvas.js?v={{ version }}"></script>
+    <script type="module" src="static/classes/grid.js?v={{ version }}"></script>
+    <script type="module" src="static/classes/hex.js?v={{ version }}"></script>
+    <script type="module" src="static/classes/layout.js?v={{ version }}"></script>
+    <script type="module" src="static/classes/permutation.js?v={{ version }}"></script>
+    <script type="module" src="static/classes/point.js?v={{ version }}"></script>
   </body>
 </html>
