@@ -8,10 +8,17 @@ body {
   background-color: black;
 }
 
+.interface {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
 .flex-container {
   display: flex;
   justify-content: center;
+  align-content: space-around;
   align-items: center;
+  justify-content: space-between;
 }
 
 #play-button,
@@ -19,9 +26,19 @@ body {
 #clear-button {
   width: 200px;
   height: 50px;
+  flex-shrink: 1;
 }
 
 #play-button,
 #random-button {
-  margin-right: 50px;
+  margin-right: 30px;
+}
+
+#generation-text {
+  padding: 10px;
+  margin-right: 30px;
+  font-size: 1.5em;
+  border: 1px solid white;
+  color: white;
+  flex-shrink: 0;
 }

@@ -10,8 +10,14 @@ import { Grid } from "../classes/grid.js";
 // Declare variable for setInterval function
 let gameLoop;
 
+// Track generation number
+let generation = 1;
+
 // Track ongoing touches on the screen
 let ongoingTouches = [];
+
+// Block that contains generation number
+const generationText = document.querySelector("#generation-text");
 
 // Watch if user is drawing
 let isInteracting = false;
@@ -25,7 +31,7 @@ let currentCell;
 let isActive = false;
 
 // Delay between generations (ms)
-const delay = 500;
+const delay = 10;
 
 // Dimensions of hexes
 let cellSize = 10;
@@ -93,12 +99,18 @@ playButton.addEventListener("click", () => {
 
 // Draw new random grid when randomButton is clicked
 randomButton.addEventListener("click", () => {
+  generation = 1;
+  generationText.innerHTML = `Generation: ${generation}`;
+
   grid.createRandomGrid(layout, canvas);
   canvas.drawGrid(layout, grid.cells);
 });
 
 // Draw new empty grid when Clear button is clicked
 clearButton.addEventListener("click", () => {
+  generation = 1;
+  generationText.innerHTML = `Generation: ${generation}`;
+
   grid.createEmptyGrid(layout, canvas);
   canvas.drawGrid(layout, grid.cells);
 });
@@ -117,6 +129,9 @@ function game() {
 
   // Draw the grid
   canvas.drawGrid(layout, grid.cells);
+
+  generation++;
+  generationText.innerHTML = `Generation: ${generation}`;
 }
 
 function changeCurrentCell() {

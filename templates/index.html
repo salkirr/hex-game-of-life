@@ -9,17 +9,32 @@
     <div>
       <canvas id="game"></canvas>
     </div>
-    <div class="flex-container button-container">
-      <button id="play-button">Start/Stop</button>
-      <button id="random-button">Random</button>
-      <button id="clear-button">Clear</button>
+    <div class="flex-container interface">
+      <span id="generation-text">Generation: 1</span>
+      <div class="flex-container">
+        <button id="play-button">Start/Stop</button>
+        <button id="random-button">Random</button>
+        <button id="clear-button">Clear</button>
+      </div>
     </div>
     <script type="module" src="static/scripts/game.js?v={{ version }}"></script>
-    <script type="module" src="static/classes/canvas.js?v={{ version }}"></script>
+    <script
+      type="module"
+      src="static/classes/canvas.js?v={{ version }}"
+    ></script>
     <script type="module" src="static/classes/grid.js?v={{ version }}"></script>
     <script type="module" src="static/classes/hex.js?v={{ version }}"></script>
-    <script type="module" src="static/classes/layout.js?v={{ version }}"></script>
-    <script type="module" src="static/classes/permutation.js?v={{ version }}"></script>
-    <script type="module" src="static/classes/point.js?v={{ version }}"></script>
+    <script
+      type="module"
+      src="static/classes/layout.js?v={{ version }}"
+    ></script>
+    <script
+      type="module"
+      src="static/classes/permutation.js?v={{ version }}"
+    ></script>
+    <script
+      type="module"
+      src="static/classes/point.js?v={{ version }}"
+    ></script>
   </body>
 </html>
