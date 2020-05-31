@@ -5,5 +5,5 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    version = "d52fed1"
+    version = "dd3100"
     return render_template("index.html", version=version)

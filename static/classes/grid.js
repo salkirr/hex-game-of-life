@@ -40,7 +40,6 @@ export class Grid {
       !this.cells[imaginaryCell.r] ||
       !this.cells[imaginaryCell.r][imaginaryCell.q]
     ) {
-      console.log(`Not found ${imaginaryCell.q} ${imaginaryCell.r}`);
       return;
     }
 
