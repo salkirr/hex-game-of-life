@@ -8,7 +8,12 @@ body {
   background-color: black;
 }
 
+canvas {
+  border-bottom: 1px solid white;
+}
+
 .interface {
+  padding-top: 1em;
   margin-left: 2em;
   margin-right: 2em;
 }
@@ -24,6 +29,7 @@ body {
 #play-button,
 #random-button,
 #clear-button {
+  font-size: 1.2em;
   width: 200px;
   height: 50px;
   flex-shrink: 1;
@@ -41,4 +47,13 @@ body {
   border: 1px solid white;
   color: white;
   flex-shrink: 0;
+}
+
+#hexagons-size {
+  margin-right: 30px;
+}
+
+#hexagons-size span {
+  font-size: 1.1em;
+  color: white;
 }

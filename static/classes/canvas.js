@@ -99,4 +99,18 @@ export class Canvas {
       }
     }
   }
+
+  /* Redraw grid saving all possible cells from the current one */
+  redrawCurrentGrid(layout, currentCells, newCells) {
+    // Carry all possible cells to the new grid
+    for (const r of Object.keys(currentCells)) {
+      for (const q of Object.keys(currentCells[r])) {
+        if (newCells[r] && newCells[r][q]) {
+          newCells[r][q] = currentCells[r][q];
+        }
+      }
+    }
+
+    this.drawGrid(layout, newCells);
+  }
 }

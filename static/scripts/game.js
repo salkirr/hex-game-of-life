@@ -33,13 +33,14 @@ let isActive = false;
 // Delay between generations (ms)
 const delay = 10;
 
-// Dimensions of hexes
-let cellSize = 10;
+// Cell size input element
+const cellSizeElem = document.querySelector("#hexagons-size input");
+cellSizeElem.value = 15;
 
 // Coordinates of the center of the rectangle
 let centerPoint = new Point(0, 0);
 
-const layout = new Layout(Layout.pointy, cellSize, centerPoint);
+const layout = new Layout(Layout.pointy, cellSizeElem.value, centerPoint);
 
 const canvas = new Canvas("game");
 
@@ -113,6 +114,18 @@ clearButton.addEventListener("click", () => {
 
   grid.createEmptyGrid(layout, canvas);
   canvas.drawGrid(layout, grid.cells);
+});
+
+// Change cell size and redraw grid when element value had changed
+cellSizeElem.addEventListener("pointerup", () => {
+  layout.size = cellSizeElem.value;
+
+  let currentCells = grid.cells;
+
+  grid.createEmptyGrid(layout, canvas);
+  let newCells = grid.cells;
+
+  canvas.redrawCurrentGrid(layout, currentCells, newCells);
 });
 
 /* -------------------------------------------------------------------------- */
