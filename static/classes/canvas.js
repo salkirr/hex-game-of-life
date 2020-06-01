@@ -13,7 +13,7 @@ export class Canvas {
 
     // Style properties
     this.lineColor = "#cccbca";
-    this.lineWidth = 3;
+    this.lineWidth = 2;
     this.colorAlive = "white";
     this.colorEmpty = "black";
     this.backgroundColor = "black";
@@ -28,7 +28,7 @@ export class Canvas {
 
   updateCanvasDimensions() {
     this.canvasElem.width = innerWidth;
-    this.canvasElem.height = innerHeight - 100;
+    this.canvasElem.height = innerHeight - 175;
   }
 
   drawCell(layout, cell) {

@@ -10,6 +10,9 @@ import { Grid } from "../classes/grid.js";
 // Declare variable for setInterval function
 let gameLoop;
 
+// State of the game
+let isActive = false;
+
 // Track generation number
 let generation = 1;
 
@@ -20,31 +23,28 @@ let ongoingTouches = [];
 const generationText = document.querySelector("#generation-text");
 
 // Watch if user is drawing
-let isInteracting = false;
+let isInteractingWithCanvas = false;
 let isCreating = false;
 
 // Watch on what cell were cursor when mouse was clicked
 let previousCell;
 let currentCell;
 
-// State of the game
-let isActive = false;
+// Get game speed input element
+const speedElem = document.querySelector("#game-speed input");
+speedElem.min = 0;
+speedElem.max = 1000;
+speedElem.value = 500;
+speedElem.step = 50;
 
 // Delay between generations (ms)
-const delay = 10;
+let delay = 1000 - speedElem.value;
 
-// Cell size input element
+// Get cell size input element
 const cellSizeElem = document.querySelector("#hexagons-size input");
+cellSizeElem.min = 5;
+cellSizeElem.max = 40;
 cellSizeElem.value = 15;
-
-// Coordinates of the center of the rectangle
-let centerPoint = new Point(0, 0);
-
-const layout = new Layout(Layout.pointy, cellSizeElem.value, centerPoint);
-
-const canvas = new Canvas("game");
-
-const grid = new Grid();
 
 // Get start/stop button
 const playButton = document.querySelector("#play-button");
@@ -54,6 +54,13 @@ const randomButton = document.querySelector("#random-button");
 
 // Get Clear button
 const clearButton = document.querySelector("#clear-button");
+
+// Coordinates of the center of the rectangle
+let centerPoint = new Point(0, 0);
+
+const layout = new Layout(Layout.pointy, cellSizeElem.value, centerPoint);
+const canvas = new Canvas("game");
+const grid = new Grid();
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------- EVENTS ---------------------------------- */
@@ -117,7 +124,7 @@ clearButton.addEventListener("click", () => {
 });
 
 // Change cell size and redraw grid when element value had changed
-cellSizeElem.addEventListener("pointerup", () => {
+cellSizeElem.addEventListener("input", () => {
   layout.size = cellSizeElem.value;
 
   if (layout.size <= 8) {
@@ -136,6 +143,16 @@ cellSizeElem.addEventListener("pointerup", () => {
   let newCells = grid.cells;
 
   canvas.redrawCurrentGrid(layout, currentCells, newCells);
+});
+
+// Change game speed when element value had changed
+speedElem.addEventListener("input", () => {
+  delay = 1000 - speedElem.value;
+
+  if (isActive) {
+    clearInterval(gameLoop);
+    gameLoop = setInterval(game, delay);
+  }
 });
 
 /* -------------------------------------------------------------------------- */
@@ -200,7 +217,7 @@ function ongoingIndexById(idToFind) {
 
 function handleStart(event) {
   event.preventDefault();
-  isInteracting = true;
+  isInteractingWithCanvas = true;
 
   // Different actions for mouse and touchscreen
   let point;
@@ -226,7 +243,7 @@ function handleStart(event) {
 }
 
 function handleMove(event) {
-  if (isInteracting) {
+  if (isInteractingWithCanvas) {
     event.preventDefault();
 
     // Different actions for mouse and touchscreen
@@ -255,7 +272,7 @@ function handleMove(event) {
 }
 
 function handleEnd() {
-  if (isInteracting) {
+  if (isInteractingWithCanvas) {
     event.preventDefault();
 
     // Different actions for mouse and touchscreen
@@ -287,7 +304,7 @@ function handleEnd() {
       }
     });
 
-    isInteracting = false;
+    isInteractingWithCanvas = false;
     previousCell = undefined;
   }
 }
