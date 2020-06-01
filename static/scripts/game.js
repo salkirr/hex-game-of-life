@@ -120,6 +120,16 @@ clearButton.addEventListener("click", () => {
 cellSizeElem.addEventListener("pointerup", () => {
   layout.size = cellSizeElem.value;
 
+  if (layout.size <= 8) {
+    canvas.lineWidth = 1;
+  } else if (layout.size < 20) {
+    canvas.lineWidth = 2;
+  } else if (layout.size < 30) {
+    canvas.lineWidth = 3;
+  } else {
+    canvas.lineWidth = 4;
+  }
+
   let currentCells = grid.cells;
 
   grid.createEmptyGrid(layout, canvas);

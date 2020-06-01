@@ -54,6 +54,10 @@ canvas {
 }
 
 #hexagons-size span {
-  font-size: 1.1em;
+  font-size: 1.2em;
   color: white;
+}
+
+#hexagons-size input {
+  width: 15em;
 }
