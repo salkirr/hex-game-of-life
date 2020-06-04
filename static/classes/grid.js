@@ -1,13 +1,21 @@
 import { Permutation } from "./permutation.js";
 
 export class Grid {
-  constructor() {
+  constructor(minAlive, maxAlive, minBirth, maxBirth) {
     // Variable for all cells in the grid
     this.cells;
 
     // Dimensions of the grid
     this.gridWidth;
     this.gridHeight;
+
+    // Range of values for cell to stay alive
+    this.minAlive = Number(minAlive);
+    this.maxAlive = Number(maxAlive);
+
+    // Range of values for cell to be born
+    this.minBirth = Number(minBirth);
+    this.maxBirth = Number(maxBirth);
   }
 
   // Get number of hexes in a row
@@ -131,12 +139,17 @@ export class Grid {
         }
 
         // Change the state of the hex using rules
-        if (newCell.isAlive && (neighboursAlive == 2 || neighboursAlive == 3)) {
+        if (
+          newCell.isAlive &&
+          neighboursAlive >= this.minAlive &&
+          neighboursAlive <= this.maxAlive
+        ) {
           newCell.isAlive = true;
-        }
-        // We shouldn't check if hex is dead because all alive hexes
-        // with 3 alive neighbours passed the first condition
-        else if (neighboursAlive == 3) {
+        } else if (
+          !newCell.isAlive &&
+          neighboursAlive >= this.minBirth &&
+          neighboursAlive <= this.maxBirth
+        ) {
           newCell.isAlive = true;
         } else {
           newCell.isAlive = false;

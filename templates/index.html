@@ -20,11 +20,44 @@
           <span>Speed: </span>
           <input type="range" />
         </div>
+        <button id="change-rules">Change Rules</button>
       </div>
       <div class="flex-container">
         <button id="play-button">Start/Stop</button>
         <button id="random-button">Random</button>
         <button id="clear-button">Clear</button>
+      </div>
+    </div>
+    <div class="rules-container">
+      <h1>Rules</h1>
+      <div id="alive-conditions">
+        <h2>To stay alive:</h2>
+        <div class="values-range">
+          <div class="input-container min-input-container">
+            <span>Min:</span>
+            <input type="number" id="min-alive" />
+          </div>
+          <div class="input-container">
+            <span>Max:</span>
+            <input type="number" id="max-alive" />
+          </div>
+        </div>
+      </div>
+      <div id="birth-conditions">
+        <h2>To be born:</h2>
+        <div class="values-range">
+          <div class="input-container min-input-container">
+            <span>Min:</span>
+            <input type="number" id="min-birth" />
+          </div>
+          <div class="input-container">
+            <span>Max:</span>
+            <input type="number" id="max-birth" />
+          </div>
+        </div>
+      </div>
+      <div class="close-button-container">
+        <button id="close-button">Close</button>
       </div>
     </div>
     <script type="module" src="static/scripts/game.js?v={{ version }}"></script>

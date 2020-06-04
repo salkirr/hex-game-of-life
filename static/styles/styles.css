@@ -6,6 +6,7 @@ body {
   height: 100%;
   margin: 0;
   background-color: black;
+  user-select: none;
 }
 
 canvas {
@@ -51,7 +52,8 @@ canvas {
   flex-shrink: 0;
 }
 
-#hexagons-size {
+#hexagons-size,
+#game-speed {
   margin-right: 30px;
 }
 
@@ -64,4 +66,79 @@ canvas {
 #hexagons-size input,
 #game-speed input {
   width: 15em;
+}
+
+#change-rules {
+  width: 120px;
+  height: 40px;
+  font-size: 1em;
+}
+
+.rules-container {
+  display: block;
+  position: relative;
+  visibility: hidden;
+  width: 400px;
+  height: 380px;
+  color: white;
+  border-radius: 8px;
+  bottom: 60vh;
+  left: 0;
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
+  background-color: rgba(83, 83, 87, 0.75);
+}
+
+.rules-container h1,
+.rules-container h2 {
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.rules-container h1 {
+  text-align: center;
+}
+
+#alive-conditions,
+#birth-conditions {
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+  padding: 25px 0;
+}
+
+.values-range {
+  display: flex;
+  padding-top: 20px;
+  justify-content: space-evenly;
+}
+
+.input-container {
+  font-size: 1.3em;
+}
+
+.input-container span {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.min-input-container span {
+  margin-right: 18px;
+}
+
+.input-container input {
+  width: 50px;
+  font-size: 0.9em;
+}
+
+.close-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#close-button {
+  font-size: 1.1em;
+  width: 110px;
+  height: 40px;
 }
