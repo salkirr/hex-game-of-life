@@ -151,7 +151,7 @@ randomButton.addEventListener("click", () => {
   generationText.innerHTML = `Generation: ${generation}`;
 
   grid.createRandomGrid(layout, canvas);
-  canvas.drawGrid(layout, grid.cells);
+  canvas.drawGrid(layout, grid.currentConfiguration);
 });
 
 // Draw new empty grid when Clear button is clicked
@@ -160,7 +160,7 @@ clearButton.addEventListener("click", () => {
   generationText.innerHTML = `Generation: ${generation}`;
 
   grid.createEmptyGrid(layout, canvas);
-  canvas.drawGrid(layout, grid.cells);
+  canvas.drawGrid(layout, grid.currentConfiguration);
 });
 
 // Change cell size and redraw grid when element value had changed
@@ -177,10 +177,10 @@ cellSizeElem.addEventListener("input", () => {
     canvas.lineWidth = 4;
   }
 
-  let currentCells = grid.cells;
+  let currentCells = grid.currentConfiguration;
 
   grid.createEmptyGrid(layout, canvas);
-  let newCells = grid.cells;
+  let newCells = grid.currentConfiguration;
 
   canvas.redrawCurrentGrid(layout, currentCells, newCells);
 });
@@ -278,17 +278,29 @@ maxBirthElem.addEventListener("input", () => {
 
 // Draw the grid for the first time
 grid.createEmptyGrid(layout, canvas);
-canvas.drawGrid(layout, grid.cells);
+canvas.drawGrid(layout, grid.currentConfiguration);
 
 function game() {
   // Create next generation of hexagons
   grid.createNextGeneration();
 
-  // Draw the grid
-  canvas.drawGrid(layout, grid.cells);
+  if (!grid.isChanged()) {
+    alert("Nothing has changed since last generation. The game is stopped.");
+
+    isActive = false;
+    randomButton.disabled = false;
+    clearButton.disabled = false;
+
+    clearInterval(gameLoop);
+
+    return;
+  }
 
   generation++;
   generationText.innerHTML = `Generation: ${generation}`;
+
+  // Draw the grid
+  canvas.drawGrid(layout, grid.currentConfiguration);
 }
 
 function changeCurrentCell() {
@@ -306,7 +318,7 @@ function changeCurrentCell() {
 
   grid.setCellState(currentCell, !isCreating);
 
-  canvas.drawGrid(layout, grid.cells);
+  canvas.drawGrid(layout, grid.currentConfiguration);
 
   previousCell = currentCell;
 }

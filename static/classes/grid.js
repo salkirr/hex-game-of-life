@@ -2,8 +2,11 @@ import { Permutation } from "./permutation.js";
 
 export class Grid {
   constructor(minAlive, maxAlive, minBirth, maxBirth) {
-    // Variable for all cells in the grid
-    this.cells;
+    // Variable for all current cells in the grid
+    this.currentConfiguration;
+
+    // Variable for all cells from the previous grid
+    this.previousConfiguration;
 
     // Dimensions of the grid
     this.gridWidth;
@@ -45,17 +48,17 @@ export class Grid {
   // Get cell from current grid
   getCell(imaginaryCell) {
     if (
-      !this.cells[imaginaryCell.r] ||
-      !this.cells[imaginaryCell.r][imaginaryCell.q]
+      !this.currentConfiguration[imaginaryCell.r] ||
+      !this.currentConfiguration[imaginaryCell.r][imaginaryCell.q]
     ) {
       return;
     }
 
-    return this.cells[imaginaryCell.r][imaginaryCell.q];
+    return this.currentConfiguration[imaginaryCell.r][imaginaryCell.q];
   }
 
   setCellState(cell, isAlive) {
-    this.cells[cell.r][cell.q].isAlive = isAlive;
+    this.currentConfiguration[cell.r][cell.q].isAlive = isAlive;
   }
 
   /* Create rectangular grid */
@@ -68,7 +71,7 @@ export class Grid {
       (q, r) -> coordinates; [r][q] -> indexes
       Blame the algorithm that generates Hex's for this.
     */
-    this.cells = {};
+    this.currentConfiguration = {};
 
     // Get min and max q coordinates
     let qMin = -Math.floor(this.gridWidth / 2);
@@ -87,7 +90,7 @@ export class Grid {
         innerDict[q] = Permutation.QRS(q, r, -q - r);
       }
 
-      this.cells[r] = innerDict;
+      this.currentConfiguration[r] = innerDict;
     }
   }
 
@@ -101,9 +104,11 @@ export class Grid {
   createRandomGrid(layout, canvas) {
     this.createEmptyGrid(layout, canvas);
 
-    for (const r of Object.keys(this.cells)) {
-      for (const q of Object.keys(this.cells[r])) {
-        this.cells[r][q].isAlive = Boolean(Math.round(Math.random()));
+    for (const r of Object.keys(this.currentConfiguration)) {
+      for (const q of Object.keys(this.currentConfiguration[r])) {
+        this.currentConfiguration[r][q].isAlive = Boolean(
+          Math.round(Math.random())
+        );
       }
     }
   }
@@ -113,12 +118,12 @@ export class Grid {
     let newCells = {};
 
     // Iterate through all hexes and calculate their next state
-    for (const r of Object.keys(this.cells)) {
+    for (const r of Object.keys(this.currentConfiguration)) {
       // Create inner dict for hexes
       let innerDict = {};
 
-      for (const q of Object.keys(this.cells[r])) {
-        let newCell = this.cells[r][q].clone();
+      for (const q of Object.keys(this.currentConfiguration[r])) {
+        let newCell = this.currentConfiguration[r][q].clone();
 
         // Get number of alive neighbours
         let neighboursAlive = 0;
@@ -163,6 +168,23 @@ export class Grid {
       newCells[r] = innerDict;
     }
 
-    this.cells = newCells;
+    this.previousConfiguration = this.currentConfiguration;
+    this.currentConfiguration = newCells;
+  }
+
+  /* Check if configuration has changed or not. */
+  isChanged() {
+    for (const r of Object.keys(this.currentConfiguration)) {
+      for (const q of Object.keys(this.currentConfiguration[r])) {
+        if (
+          this.currentConfiguration[r][q].isAlive !==
+          this.previousConfiguration[r][q].isAlive
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
