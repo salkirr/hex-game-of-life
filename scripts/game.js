@@ -666,11 +666,17 @@ playButton.addEventListener("click", () => {
     randomButton.disabled = true;
     clearButton.disabled = true;
 
+    // Change text on the button
+    playButton.textContent = "Stop";
+
     gameLoop = setInterval(game, delay);
   } else {
     // Enable buttons
     randomButton.disabled = false;
     clearButton.disabled = false;
+
+    // Change text on the button
+    playButton.textContent = "Start";
 
     clearInterval(gameLoop);
   }
@@ -819,9 +825,15 @@ function game() {
   if (!grid.isChanged()) {
     alert("Nothing has changed since the last generation. The game is stopped.");
 
+    // Change game status
     isActive = false;
+
+    // Enable buttons
     randomButton.disabled = false;
     clearButton.disabled = false;
+
+    // Change text on the play button
+    playButton.textContent = "Start";
 
     clearInterval(gameLoop);
 
