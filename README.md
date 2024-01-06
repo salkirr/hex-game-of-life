@@ -1,6 +1,6 @@
 # Hex Game of Life
 
-This is my final project for the [Harvard’s CS50](https://cs50.harvard.edu/) course. Live version is available [here](https://lazy-void.github.io/hex-game-of-life/).
+This is my final project for the [Harvard’s CS50](https://cs50.harvard.edu/) course. Live version is available [here](https://salkirr.github.io/hex-game-of-life/).
 
 ## About
 
